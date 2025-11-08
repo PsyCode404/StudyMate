@@ -1,0 +1,57 @@
+<!-- Sidebar -->
+<aside class="hidden lg:flex lg:flex-col lg:w-64 bg-white border-r border-neutral-200 h-screen">
+  <!-- Logo -->
+  <div class="flex items-center gap-3 px-6 py-5 border-b border-neutral-200 flex-shrink-0">
+    <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500">
+      <mat-icon class="text-white !w-6 !h-6 !text-2xl">school</mat-icon>
+    </div>
+    <span class="text-lg font-semibold text-neutral-900">Study Tracker</span>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+    <a routerLink="/home" routerLinkActive="bg-primary-50 text-primary-700" [routerLinkActiveOptions]="{exact: true}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 font-medium transition-colors">
+      <mat-icon class="!w-5 !h-5 !text-xl">home</mat-icon>
+      <span>Home</span>
+    </a>
+    <a routerLink="/dashboard" routerLinkActive="bg-primary-50 text-primary-700" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 font-medium transition-colors">
+      <mat-icon class="!w-5 !h-5 !text-xl">analytics</mat-icon>
+      <span>Analytics</span>
+    </a>
+    <a routerLink="/calendar" routerLinkActive="bg-primary-50 text-primary-700" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 font-medium transition-colors">
+      <mat-icon class="!w-5 !h-5 !text-xl">calendar_today</mat-icon>
+      <span>Calendar</span>
+    </a>
+    <a routerLink="/focus-timer" routerLinkActive="bg-primary-50 text-primary-700" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 font-medium transition-colors">
+      <mat-icon class="!w-5 !h-5 !text-xl">timer</mat-icon>
+      <span>Focus Timer</span>
+    </a>
+    <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-400 cursor-not-allowed font-medium">
+      <mat-icon class="!w-5 !h-5 !text-xl">settings</mat-icon>
+      <span>Settings</span>
+      <span class="ml-auto text-xs bg-neutral-200 text-neutral-600 px-2 py-0.5 rounded">Soon</span>
+    </a>
+  </nav>
+
+  <!-- User Profile & Logout -->
+  <div class="px-3 py-4 border-t border-neutral-200 space-y-2 flex-shrink-0">
+    <!-- User Info -->
+    <div class="flex items-center gap-3 px-3 py-2 rounded-lg bg-neutral-50">
+      <div class="w-8 h-8 rounded-full bg-gradient-to-br from-primary-400 to-accent-400 flex items-center justify-center text-white font-semibold text-sm">
+        {{ (currentUser?.username || 'U').charAt(0).toUpperCase() }}
+      </div>
+      <div class="flex-1 min-w-0">
+        <p class="text-sm font-medium text-neutral-900 truncate">{{ currentUser?.username || 'User' }}</p>
+        <p class="text-xs text-neutral-500 truncate">{{ currentUser?.email || 'user@example.com' }}</p>
+      </div>
+    </div>
+    
+    <!-- Logout Button -->
+    <button
+      (click)="logout()"
+      class="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-neutral-600 hover:bg-red-50 hover:text-red-600 font-medium transition-colors group">
+      <mat-icon class="!w-5 !h-5 !text-xl">logout</mat-icon>
+      <span>Sign Out</span>
+    </button>
+  </div>
+</aside>

@@ -1,0 +1,148 @@
+<div class="bg-white rounded-2xl shadow-card border border-neutral-200 overflow-hidden">
+  <!-- Card Header -->
+  <div class="px-6 py-5 border-b border-neutral-200 bg-gradient-to-r from-primary-50 to-accent-50">
+    <div class="flex items-center gap-3">
+      <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 shadow-sm">
+        <mat-icon class="text-white !w-5 !h-5 !text-xl">{{ isEditMode ? 'edit' : 'add_circle' }}</mat-icon>
+      </div>
+      <div>
+        <h2 class="text-xl font-bold text-neutral-900">{{ isEditMode ? 'Edit Study Log' : 'Add New Study Log' }}</h2>
+        <p class="text-sm text-neutral-600 mt-0.5">{{ isEditMode ? 'Update your study session details' : 'Record a new study session' }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card Content -->
+  <div class="px-6 py-6">
+    <form [formGroup]="studyLogForm" (ngSubmit)="onSubmit()" class="space-y-5">
+      
+      <!-- Subject Field -->
+      <div>
+        <label class="block text-sm font-medium text-neutral-700 mb-2">
+          <span class="flex items-center gap-2">
+            <mat-icon class="!w-4 !h-4 !text-base text-primary-600">school</mat-icon>
+            Subject
+          </span>
+        </label>
+        <input 
+          type="text"
+          formControlName="subject"
+          placeholder="e.g., Mathematics, Physics, Computer Science"
+          maxlength="100"
+          class="w-full px-4 py-2.5 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+          [class.border-red-500]="hasError('subject')">
+        <div class="flex justify-between mt-1.5">
+          <p *ngIf="hasError('subject')" class="text-sm text-red-600">{{ getErrorMessage('subject') }}</p>
+          <p class="text-xs text-neutral-500 ml-auto">{{ studyLogForm.get('subject')?.value?.length || 0 }}/100</p>
+        </div>
+      </div>
+
+      <!-- Topic Field -->
+      <div>
+        <label class="block text-sm font-medium text-neutral-700 mb-2">
+          <span class="flex items-center gap-2">
+            <mat-icon class="!w-4 !h-4 !text-base text-primary-600">topic</mat-icon>
+            Topic
+          </span>
+        </label>
+        <input 
+          type="text"
+          formControlName="topic"
+          placeholder="e.g., Calculus - Derivatives, Quantum Mechanics"
+          maxlength="200"
+          class="w-full px-4 py-2.5 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+          [class.border-red-500]="hasError('topic')">
+        <div class="flex justify-between mt-1.5">
+          <p *ngIf="hasError('topic')" class="text-sm text-red-600">{{ getErrorMessage('topic') }}</p>
+          <p class="text-xs text-neutral-500 ml-auto">{{ studyLogForm.get('topic')?.value?.length || 0 }}/200</p>
+        </div>
+      </div>
+
+      <!-- Duration and Date Row -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <!-- Duration Field -->
+        <div>
+          <label class="block text-sm font-medium text-neutral-700 mb-2">
+            <span class="flex items-center gap-2">
+              <mat-icon class="!w-4 !h-4 !text-base text-primary-600">schedule</mat-icon>
+              Duration (minutes)
+            </span>
+          </label>
+          <input 
+            type="number"
+            formControlName="duration"
+            placeholder="e.g., 60, 90, 120"
+            min="1"
+            max="1440"
+            class="w-full px-4 py-2.5 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+            [class.border-red-500]="hasError('duration')">
+          <div class="flex justify-between mt-1.5">
+            <p *ngIf="hasError('duration')" class="text-sm text-red-600">{{ getErrorMessage('duration') }}</p>
+            <p *ngIf="!hasError('duration')" class="text-xs text-neutral-500">Max 1440 minutes (24 hours)</p>
+          </div>
+        </div>
+
+        <!-- Date Field -->
+        <div>
+          <label class="block text-sm font-medium text-neutral-700 mb-2">
+            <span class="flex items-center gap-2">
+              <mat-icon class="!w-4 !h-4 !text-base text-primary-600">calendar_today</mat-icon>
+              Date
+            </span>
+          </label>
+          <mat-form-field appearance="outline" class="w-full !mb-0">
+            <input 
+              matInput 
+              [matDatepicker]="picker" 
+              formControlName="date"
+              [max]="maxDate"
+              class="!py-2.5">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+          <p *ngIf="hasError('date')" class="text-sm text-red-600 mt-1.5">{{ getErrorMessage('date') }}</p>
+        </div>
+      </div>
+
+      <!-- Notes Field -->
+      <div>
+        <label class="block text-sm font-medium text-neutral-700 mb-2">
+          <span class="flex items-center gap-2">
+            <mat-icon class="!w-4 !h-4 !text-base text-primary-600">notes</mat-icon>
+            Notes (Optional)
+          </span>
+        </label>
+        <textarea 
+          formControlName="notes"
+          placeholder="Add any additional notes about this study session..."
+          rows="4"
+          maxlength="500"
+          class="w-full px-4 py-2.5 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors resize-none"
+          [class.border-red-500]="hasError('notes')"></textarea>
+        <div class="flex justify-between mt-1.5">
+          <p *ngIf="hasError('notes')" class="text-sm text-red-600">{{ getErrorMessage('notes') }}</p>
+          <p class="text-xs text-neutral-500 ml-auto">{{ studyLogForm.get('notes')?.value?.length || 0 }}/500</p>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-col-reverse sm:flex-row gap-3 pt-4 border-t border-neutral-200">
+        <button 
+          type="button" 
+          (click)="onCancel()"
+          class="flex items-center justify-center gap-2 px-5 py-2.5 border border-neutral-300 text-neutral-700 rounded-lg font-medium hover:bg-neutral-50 transition-colors">
+          <mat-icon class="!w-5 !h-5 !text-xl">cancel</mat-icon>
+          <span>Cancel</span>
+        </button>
+        
+        <button 
+          type="submit"
+          [disabled]="studyLogForm.invalid"
+          class="flex items-center justify-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium shadow-sm hover:shadow transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-primary-600">
+          <mat-icon class="!w-5 !h-5 !text-xl">{{ isEditMode ? 'save' : 'add' }}</mat-icon>
+          <span>{{ submitButtonText }}</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

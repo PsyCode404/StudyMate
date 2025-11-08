@@ -1,0 +1,234 @@
+<div class="flex h-screen bg-neutral-50 overflow-hidden">
+  
+  <!-- Sidebar -->
+  <app-sidebar></app-sidebar>
+
+  <!-- Main Content Area -->
+  <div class="flex-1 flex flex-col overflow-hidden">
+    
+    <!-- Top Navigation Bar -->
+    <header class="bg-white border-b border-neutral-200 px-6 py-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-2xl font-bold text-neutral-900">📅 Calendar View</h1>
+          <p class="text-sm text-neutral-600 mt-0.5">Visualize your study sessions by date</p>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 overflow-y-auto bg-neutral-50 p-4">
+
+      <!-- Loading State -->
+      <div *ngIf="loading" class="flex flex-col items-center justify-center py-20">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p class="mt-4 text-neutral-600 font-medium">Loading calendar...</p>
+      </div>
+
+      <!-- Calendar Content -->
+      <div *ngIf="!loading" class="max-w-7xl mx-auto space-y-4">
+        
+        <!-- Month Stats -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="bg-white rounded-xl shadow-card border border-neutral-200 p-4">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-lg bg-primary-100 flex items-center justify-center">
+                <mat-icon class="!w-5 !h-5 !text-xl text-primary-600">library_books</mat-icon>
+              </div>
+              <div>
+                <p class="text-2xl font-bold text-neutral-900">{{ getMonthStats().totalSessions }}</p>
+                <p class="text-sm text-neutral-600">Sessions This Month</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-xl shadow-card border border-neutral-200 p-4">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-lg bg-accent-100 flex items-center justify-center">
+                <mat-icon class="!w-5 !h-5 !text-xl text-accent-600">schedule</mat-icon>
+              </div>
+              <div>
+                <p class="text-2xl font-bold text-neutral-900">{{ getMonthStats().totalHours }}h</p>
+                <p class="text-sm text-neutral-600">Total Hours</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-xl shadow-card border border-neutral-200 p-4">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
+                <mat-icon class="!w-5 !h-5 !text-xl text-green-600">event_available</mat-icon>
+              </div>
+              <div>
+                <p class="text-2xl font-bold text-neutral-900">{{ getMonthStats().activeDays }}</p>
+                <p class="text-sm text-neutral-600">Active Days</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Calendar Card -->
+        <div class="bg-white rounded-xl shadow-card border border-neutral-200 p-4">
+          <!-- Calendar Header -->
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl font-bold text-neutral-900">
+              {{ monthNames[currentMonth] }} {{ currentYear }}
+            </h2>
+            <div class="flex items-center gap-2">
+              <button 
+                (click)="goToToday()"
+                class="px-4 py-2 text-sm border border-neutral-300 text-neutral-700 rounded-lg font-medium hover:bg-neutral-50 transition-colors">
+                Today
+              </button>
+              <button 
+                (click)="previousMonth()"
+                class="flex items-center justify-center w-9 h-9 rounded-lg border border-neutral-300 text-neutral-700 hover:bg-neutral-50 transition-colors">
+                <mat-icon class="!w-5 !h-5 !text-xl">chevron_left</mat-icon>
+              </button>
+              <button 
+                (click)="nextMonth()"
+                class="flex items-center justify-center w-9 h-9 rounded-lg border border-neutral-300 text-neutral-700 hover:bg-neutral-50 transition-colors">
+                <mat-icon class="!w-5 !h-5 !text-xl">chevron_right</mat-icon>
+              </button>
+            </div>
+          </div>
+
+          <!-- Weekday Headers -->
+          <div class="grid grid-cols-7 gap-1.5 mb-1.5">
+            <div *ngFor="let day of weekDays" 
+                 class="text-center py-1.5 text-xs font-semibold text-neutral-600">
+              {{ day }}
+            </div>
+          </div>
+
+          <!-- Calendar Days -->
+          <div class="grid grid-cols-7 gap-1">
+            <div *ngFor="let day of calendarDays" 
+                 (click)="onDayClick(day)"
+                 [class.opacity-40]="!day.isCurrentMonth"
+                 [class.cursor-pointer]="day.logs.length > 0"
+                 [class.hover:bg-neutral-50]="day.logs.length > 0"
+                 class="relative border border-neutral-200 rounded p-1 transition-all flex flex-col"
+                 style="height: 70px; min-height: 70px; max-height: 70px;">
+              
+              <!-- Day Number -->
+              <div class="flex items-center justify-between">
+                <span 
+                  [class.bg-primary-600]="day.isToday"
+                  [class.text-white]="day.isToday"
+                  [class.text-neutral-900]="!day.isToday && day.isCurrentMonth"
+                  [class.text-neutral-400]="!day.isCurrentMonth"
+                  class="inline-flex items-center justify-center w-4 h-4 text-[10px] font-semibold rounded-full"
+                  [class.shadow-sm]="day.isToday">
+                  {{ day.date.getDate() }}
+                </span>
+                <mat-icon 
+                  *ngIf="day.logs.length > 0"
+                  class="!w-2.5 !h-2.5 !text-[10px] text-primary-600">
+                  circle
+                </mat-icon>
+              </div>
+
+              <!-- Duration Badge -->
+              <div *ngIf="day.totalDuration > 0" 
+                   [ngClass]="getDurationColor(day.totalDuration)"
+                   class="text-[9px] font-semibold px-1 py-0.5 rounded text-center leading-none mt-1">
+                {{ formatDuration(day.totalDuration) }}
+              </div>
+
+              <!-- Session Count -->
+              <div *ngIf="day.logs.length > 0" 
+                   class="text-[8px] text-neutral-500 text-center mt-auto leading-none">
+                {{ day.logs.length }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Legend -->
+          <div class="mt-4 pt-3 border-t border-neutral-200">
+            <p class="text-xs font-medium text-neutral-700 mb-2">Study Duration</p>
+            <div class="flex flex-wrap gap-2">
+              <div class="flex items-center gap-1.5">
+                <div class="w-3 h-3 rounded bg-blue-100"></div>
+                <span class="text-[10px] text-neutral-600">< 1h</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <div class="w-3 h-3 rounded bg-green-100"></div>
+                <span class="text-[10px] text-neutral-600">1-2h</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <div class="w-3 h-3 rounded bg-yellow-100"></div>
+                <span class="text-[10px] text-neutral-600">2-3h</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <div class="w-3 h-3 rounded bg-orange-100"></div>
+                <span class="text-[10px] text-neutral-600">3-4h</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <div class="w-3 h-3 rounded bg-purple-100"></div>
+                <span class="text-[10px] text-neutral-600">4h+</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day Details Side Panel -->
+      <div *ngIf="showDayDetails && selectedDay" 
+           class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+           (click)="closeDayDetails()">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden"
+             (click)="$event.stopPropagation()">
+          
+          <!-- Panel Header -->
+          <div class="px-6 py-5 border-b border-neutral-200 bg-gradient-to-r from-primary-50 to-accent-50">
+            <div class="flex items-center justify-between">
+              <div>
+                <h3 class="text-xl font-bold text-neutral-900">{{ formatDate(selectedDay.dateString) }}</h3>
+                <p class="text-sm text-neutral-600 mt-1">
+                  {{ selectedDay.logs.length }} {{ selectedDay.logs.length === 1 ? 'session' : 'sessions' }} • 
+                  {{ formatDuration(selectedDay.totalDuration) }} total
+                </p>
+              </div>
+              <button 
+                (click)="closeDayDetails()"
+                class="flex items-center justify-center w-9 h-9 rounded-lg hover:bg-white transition-colors">
+                <mat-icon class="!w-6 !h-6 !text-2xl text-neutral-600">close</mat-icon>
+              </button>
+            </div>
+          </div>
+
+          <!-- Panel Content -->
+          <div class="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+            <div class="space-y-4">
+              <div *ngFor="let log of selectedDay.logs" 
+                   class="bg-neutral-50 rounded-xl p-4 border border-neutral-200">
+                <div class="flex items-start justify-between gap-4">
+                  <div class="flex-1">
+                    <div class="flex items-center gap-2 mb-2">
+                      <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-gradient-to-r from-primary-100 to-accent-100 text-primary-700 rounded-lg text-sm font-semibold">
+                        <mat-icon class="!w-4 !h-4 !text-base">school</mat-icon>
+                        {{ log.subject }}
+                      </span>
+                    </div>
+                    <h4 class="text-lg font-semibold text-neutral-900 mb-2">{{ log.topic }}</h4>
+                    <div class="flex items-center gap-4 text-sm text-neutral-600">
+                      <span class="flex items-center gap-1.5">
+                        <mat-icon class="!w-4 !h-4 !text-base text-primary-600">schedule</mat-icon>
+                        <span class="font-medium">{{ formatDuration(log.duration) }}</span>
+                      </span>
+                    </div>
+                    <p *ngIf="log.notes" class="mt-3 text-sm text-neutral-700 bg-white rounded-lg p-3 border border-neutral-200">
+                      {{ log.notes }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>

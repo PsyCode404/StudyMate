@@ -1,0 +1,31 @@
+# General
+.DS_Store
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+
+# Build artifacts
+target/
+build/
+dist/
+out/
+
+# Documentation artifacts
+*.md~

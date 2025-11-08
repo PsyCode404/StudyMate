@@ -1,0 +1,82 @@
+<div class="min-h-screen bg-gradient-to-br from-purple-50 via-white to-primary-50 flex items-center justify-center p-4">
+  <div class="w-full max-w-2xl">
+    <!-- Welcome Card -->
+    <div class="bg-white rounded-3xl shadow-2xl border border-neutral-200 p-12 text-center">
+      <!-- Animated Icon -->
+      <div class="mb-6 flex justify-center">
+        <div class="w-24 h-24 bg-gradient-to-br from-primary-100 to-accent-100 rounded-full flex items-center justify-center animate-bounce">
+          <span class="text-5xl">🎉</span>
+        </div>
+      </div>
+
+      <!-- Welcome Message -->
+      <h1 class="text-4xl font-bold text-neutral-900 mb-4">
+        Welcome back, <span class="bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">{{ user()?.username }}</span>!
+      </h1>
+      
+      <p class="text-xl text-neutral-600 mb-8">
+        Ready to crush your study goals this week?
+      </p>
+
+      <!-- Stats Preview -->
+      <div class="grid grid-cols-3 gap-4 mb-8">
+        <div class="bg-gradient-to-br from-primary-50 to-primary-100 rounded-xl p-4 border border-primary-200">
+          <div class="text-3xl font-bold text-primary-700">
+            <span *ngIf="!loading()">{{ studySessions() }}</span>
+            <span *ngIf="loading()" class="animate-pulse">...</span>
+          </div>
+          <div class="text-xs text-neutral-600 mt-1">Study Sessions</div>
+        </div>
+        <div class="bg-gradient-to-br from-accent-50 to-accent-100 rounded-xl p-4 border border-accent-200">
+          <div class="text-3xl font-bold text-accent-700">
+            <span *ngIf="!loading()">{{ focusHours() }}</span>
+            <span *ngIf="loading()" class="animate-pulse">...</span>
+          </div>
+          <div class="text-xs text-neutral-600 mt-1">Focus Hours</div>
+        </div>
+        <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 border border-green-200">
+          <div class="text-3xl font-bold text-green-700">
+            <span *ngIf="!loading()">{{ streakDays() }}</span>
+            <span *ngIf="loading()" class="animate-pulse">...</span>
+          </div>
+          <div class="text-xs text-neutral-600 mt-1">Streak Days</div>
+        </div>
+      </div>
+
+      <!-- CTA Button -->
+      <button
+        (click)="goToDashboard()"
+        class="bg-gradient-to-r from-primary-600 to-accent-600 text-white font-semibold py-4 px-8 rounded-xl hover:from-primary-700 hover:to-accent-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-all transform hover:scale-105 shadow-lg"
+      >
+        <span class="flex items-center gap-2">
+          <span>Go to Dashboard</span>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+          </svg>
+        </span>
+      </button>
+
+      <!-- Quick Tips -->
+      <div class="mt-8 p-4 bg-gradient-to-r from-primary-50 to-accent-50 rounded-xl border border-primary-200">
+        <div class="flex items-start gap-3 text-left">
+          <div class="flex-shrink-0 w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-semibold text-neutral-900 mb-1">💡 Pro Tip</h3>
+            <p class="text-sm text-neutral-600">
+              Start with the Pomodoro timer to build consistent study habits. Just 25 minutes of focused work can make a huge difference!
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="mt-6 text-center text-sm text-neutral-500">
+      <p>Let's make today productive! 🚀</p>
+    </div>
+  </div>
+</div>

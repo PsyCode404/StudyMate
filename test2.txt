@@ -1,0 +1,54 @@
+<body>
+<h2>liste des note </h2>
+<form action ="add" method="add" >
+    <label> donner la note </label>
+    <input type="number" name="note" >
+    <input type="submit" value="sauvegarder">
+</form>
+<c:if not empty listenote>
+    <ul>
+        <c:foreach  var ="n" item="notelist">
+        ${note}
+        <a href="delete?note=${note}"></a>
+        </c:foreach>
+    </c:if>
+    </ul>
+    <p><${message}></p>
+    <p>le moyenne est : <${moyenne}></p>
+
+
+
+</body>
+@webServlet(urlpattern=/add")
+ protected void doPost (httpservletrequest request , httpservlet response ) throws servleteException ,IOException {
+        String noteStr = request.getParameter("note");
+          double note = Double.parseDouble(noteStr);
+        httpsession session = request.getsession("true");
+        arraylist<int> liste = session.getatrribute("listnenote");
+        if liste = null {
+            arraylist<int> liste = new arrayliqte<int>()</int>
+        }
+        if l§liste contins (note){
+            liste.add(note)
+            n=1
+            int moyenne = moyenne + note / n+1 ; 
+            request.setatrribute("message" , "ajoout succeeded" )
+        }else {
+            request.setatrribute("meesage","ajoout failed");
+            
+        }
+                session.setAttribute("listeNotes", liste);
+        session.setAttribute("moyenne", moyenne);
+
+        // Redirection
+        RequestDispatcher rd = request.getRequestDispatcher("index.jsp");
+        rd.forward(request, response);
+    }
+}
+@webservlet(urlpattern="delete")
+string noteqtr =  request.getattribute("note");
+double  note = double.parsedouble(notestr");
+httpsession session = session.getsessioon("false");
+if session != nulll {
+    arraylist note =  session.getattribute
+}

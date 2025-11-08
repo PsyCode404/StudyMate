@@ -1,0 +1,61 @@
+<div class="flex h-screen bg-neutral-50 overflow-hidden">
+  
+  <!-- Sidebar -->
+  <app-sidebar></app-sidebar>
+
+  <!-- Main Content Area -->
+  <div class="flex-1 flex flex-col overflow-hidden">
+    
+    <!-- Top Navigation Bar -->
+    <header class="bg-white border-b border-neutral-200 px-4 lg:px-8 py-4">
+      <div class="flex items-center justify-between">
+        <!-- Mobile Menu Button + Title -->
+        <div class="flex items-center gap-4">
+          <button class="lg:hidden p-2 rounded-lg hover:bg-neutral-100 transition-colors">
+            <mat-icon class="!w-6 !h-6 !text-2xl text-neutral-600">menu</mat-icon>
+          </button>
+          <div>
+            <h1 class="text-2xl font-bold text-neutral-900">Study Logs</h1>
+            <p class="text-sm text-neutral-500 mt-0.5">Track and manage your study sessions</p>
+          </div>
+        </div>
+
+        <!-- Action Button -->
+        <button 
+          *ngIf="!showForm"
+          (click)="onAddNew()"
+          class="flex items-center gap-2 px-4 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium shadow-sm hover:shadow transition-all">
+          <mat-icon class="!w-5 !h-5 !text-xl">add</mat-icon>
+          <span class="hidden sm:inline">New Log</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 overflow-y-auto bg-neutral-50">
+      <div class="max-w-7xl mx-auto px-4 lg:px-8 py-6 lg:py-8">
+        
+        <!-- Form Section (Conditional) -->
+        <div *ngIf="showForm" class="max-w-3xl mx-auto">
+          <app-study-log-form
+            [studyLog]="editingLog"
+            [submitButtonText]="editingLog ? 'Update' : 'Create'"
+            (formSubmit)="onFormSubmit($event)"
+            (formCancel)="onFormCancel()">
+          </app-study-log-form>
+        </div>
+
+        <!-- List Section (Hidden when form is shown) -->
+        <div *ngIf="!showForm">
+          <app-study-log-list
+            [studyLogs]="studyLogs"
+            [loading]="loading"
+            (editLog)="onEditLog($event)"
+            (deleteLog)="onDeleteLog($event)"
+            (viewLog)="onViewLog($event)">
+          </app-study-log-list>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
