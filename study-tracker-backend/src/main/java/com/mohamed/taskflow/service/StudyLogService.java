@@ -58,6 +58,10 @@ public class StudyLogService {
         return studyLogRepository.findByUserIdAndDateBetween(userId, start, end);
     }
     
+    public List<StudyLog> getStudyLogsBySubject(String userId, String subject) {
+        return studyLogRepository.findByUserIdAndSubject(userId, subject);
+    }
+    
     // Legacy methods (deprecated - kept for backward compatibility)
     @Deprecated
     public List<StudyLog> findAll() {
