@@ -103,15 +103,64 @@ public class AiAdvisorService {
                                int totalMinutes, double averageSessionLength, 
                                double consistencyScore) {
         
+        // Classify total study time
+        String studyTimeLevel;
+        if (totalMinutes <= 60) {
+            studyTimeLevel = "Very low study time (0-60 min total)";
+        } else if (totalMinutes <= 200) {
+            studyTimeLevel = "Low study time (60-200 min total)";
+        } else if (totalMinutes <= 600) {
+            studyTimeLevel = "Moderate study time (200-600 min total)";
+        } else if (totalMinutes <= 1200) {
+            studyTimeLevel = "High study time (600-1200 min total)";
+        } else {
+            studyTimeLevel = "Very high commitment (1200+ min total)";
+        }
+        
+        // Evaluate session duration
+        String sessionQuality;
+        if (averageSessionLength < 30) {
+            sessionQuality = "Sessions are too short to be impactful (< 30 min avg)";
+        } else if (averageSessionLength < 45) {
+            sessionQuality = "Sessions are decent but can be improved (30-45 min avg)";
+        } else if (averageSessionLength <= 60) {
+            sessionQuality = "Sessions are strong and focused (45-60 min avg)";
+        } else {
+            sessionQuality = "Sessions are very long - watch for burnout risk (> 60 min avg)";
+        }
+        
         String prompt = """
             You are a friendly and motivating academic coach helping a student in high school (adjust tone and complexity based on mark and context).
             Your job is to analyze their performance in %s (mark: %.2f/20) based on their study data, and write a short, natural, encouraging feedback message.
             
             Study Data:
             - Study sessions: %d
-            - Total study time: %d minutes
-            - Average session: %.2f minutes
+            - Total study time: %d minutes (%s)
+            - Average session: %.2f minutes (%s)
             - Consistency score: %.2f (0-1 scale, higher is better)
+            
+            IMPORTANT STUDY TIME INTERPRETATION RULES:
+            
+            Total Study Time Classification:
+            - 0-60 min total → Very low study time
+            - 60-200 min total → Low study time
+            - 200-600 min total → Moderate study time
+            - 600-1200 min total → High study time
+            - 1200+ min total → Very high commitment
+            
+            Session Duration Evaluation:
+            - Effective sessions should be 35-60 minutes
+            - If avg < 30 min → Sessions too short to be impactful
+            - If avg 30-45 min → Sessions decent but can be improved
+            - If avg 45-60 min → Sessions strong and focused
+            - If avg > 60 min → Warn about burnout risk
+            
+            CRITICAL RULES:
+            - NEVER recommend sessions shorter than 30 minutes
+            - If total study time is low, DO NOT say "just study more"
+            - Instead: suggest building consistency slowly (e.g., "Start with 2-3 focused sessions this week")
+            - Do not shame or guilt. Always encouraging tone.
+            - Be realistic about what's achievable for a high school student
             
             Write as if you're speaking directly to the student — friendly, human, supportive.
             Keep it conversational but structured into these sections exactly:
@@ -135,13 +184,14 @@ public class AiAdvisorService {
             - [2-3 realistic, human-like strengths based on their study patterns and mark]
             
             ## 💡 Growth Opportunities
-            - [2 short, practical growth ideas that match their performance level]
+            - [2 short, practical growth ideas that match their performance level and study time reality]
             
             ## 🚀 Action Plan
-            1. [3 simple, doable next steps the student can start this week]
+            1. [3 simple, doable next steps the student can start this week - be realistic about time commitment]
             
             Avoid long introductions or conclusions. Jump straight to advice.
-            """.formatted(subject, mark, totalSessions, totalMinutes, averageSessionLength, consistencyScore);
+            """.formatted(subject, mark, totalSessions, totalMinutes, studyTimeLevel, 
+                         averageSessionLength, sessionQuality, consistencyScore);
         
         return prompt;
     }

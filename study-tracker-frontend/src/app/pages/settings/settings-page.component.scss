@@ -1,0 +1,116 @@
+/* Settings Page Styles */
+
+/* Card hover effect */
+.bg-white {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Avatar styles */
+.relative.group {
+  .w-32.h-32 {
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  &:hover .w-32.h-32 {
+    transform: scale(1.05);
+  }
+}
+
+/* Avatar image */
+img[alt="User avatar"] {
+  transition: transform 0.3s ease-in-out;
+  
+  &:hover {
+    transform: scale(1.1);
+  }
+}
+
+/* Input focus styles */
+input:focus {
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+}
+
+/* Button hover effect */
+button[type="submit"]:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+
+button[type="submit"]:active {
+  transform: translateY(0);
+}
+
+/* Focus styles for accessibility */
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid #8b5cf6;
+  outline-offset: 2px;
+}
+
+/* Smooth animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.bg-white {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Radio button container styles */
+label[class*="border-violet-500"] {
+  border-width: 2px;
+}
+
+/* Radio button custom styles */
+input[type="radio"] {
+  cursor: pointer;
+  
+  &:focus {
+    outline: 2px solid #8b5cf6;
+    outline-offset: 2px;
+  }
+}
+
+/* Smooth transitions for radio options */
+label.cursor-pointer {
+  transition: all 0.2s ease-in-out;
+  
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+}
+
+/* Custom Snackbar Styles */
+::ng-deep .success-snackbar {
+  background-color: #10b981 !important;
+  color: white !important;
+  
+  .mat-mdc-snack-bar-label {
+    color: white !important;
+  }
+  
+  .mat-mdc-button {
+    color: white !important;
+  }
+}
+
+::ng-deep .error-snackbar {
+  background-color: #ef4444 !important;
+  color: white !important;
+  
+  .mat-mdc-snack-bar-label {
+    color: white !important;
+  }
+  
+  .mat-mdc-button {
+    color: white !important;
+  }
+}

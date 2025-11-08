@@ -1,0 +1,322 @@
+<div class="flex h-screen bg-neutral-50 overflow-hidden">
+  
+  <!-- Sidebar -->
+  <app-sidebar></app-sidebar>
+
+  <!-- Main Content Area -->
+  <div class="flex-1 flex flex-col overflow-hidden">
+    
+    <!-- Top Navigation Bar -->
+    <header class="bg-white border-b border-neutral-200 px-4 lg:px-8 py-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <button class="lg:hidden p-2 rounded-lg hover:bg-neutral-100 transition-colors" aria-label="Menu">
+            <mat-icon class="!w-6 !h-6 !text-2xl text-neutral-600">menu</mat-icon>
+          </button>
+          <div>
+            <div class="flex items-center gap-3">
+              <h1 class="text-2xl font-bold text-neutral-900">Leaderboard</h1>
+              <span *ngIf="isCached" class="inline-flex items-center gap-1 px-2 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-md">
+                <mat-icon class="!w-3 !h-3 !text-sm">bolt</mat-icon>
+                Cached
+              </span>
+            </div>
+            <p class="text-sm text-neutral-500 mt-0.5">Top performers ranked by study time</p>
+          </div>
+        </div>
+        <button 
+          *ngIf="!loading && leaderboard.length > 0"
+          (click)="exportLeaderboard()"
+          class="flex items-center gap-2 px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition-colors shadow-sm"
+          aria-label="Export leaderboard to CSV">
+          <mat-icon class="!w-5 !h-5 !text-xl">download</mat-icon>
+          <span class="hidden sm:inline">Export CSV</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 overflow-y-auto bg-neutral-50">
+      <div class="max-w-7xl mx-auto px-4 lg:px-8 py-6 lg:py-8">
+        
+        <!-- Controls -->
+        <div class="bg-white rounded-xl border border-neutral-200 p-4 lg:p-6 mb-6 shadow-sm">
+          <div class="flex flex-wrap gap-4">
+            
+            <!-- Period Selector -->
+            <div class="flex-1 min-w-[200px]">
+              <label for="period-select" class="block text-sm font-medium text-neutral-700 mb-2">
+                Time Period
+              </label>
+              <select 
+                id="period-select"
+                [(ngModel)]="selectedPeriod" 
+                (change)="onPeriodChange(selectedPeriod)"
+                class="w-full px-4 py-2.5 bg-white border border-neutral-300 rounded-lg text-neutral-900 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-colors"
+                aria-label="Select time period">
+                <option *ngFor="let period of periods" [value]="period.value">
+                  {{ period.label }}
+                </option>
+              </select>
+            </div>
+
+            <!-- Subject Selector -->
+            <div class="flex-1 min-w-[200px]">
+              <label for="subject-select" class="block text-sm font-medium text-neutral-700 mb-2">
+                Subject
+              </label>
+              <select 
+                id="subject-select"
+                [(ngModel)]="selectedSubject" 
+                (change)="onSubjectChange(selectedSubject)"
+                class="w-full px-4 py-2.5 bg-white border border-neutral-300 rounded-lg text-neutral-900 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-colors"
+                aria-label="Select subject">
+                <option value="all">All Subjects</option>
+                <option *ngFor="let subject of subjects.slice(1)" [value]="subject">
+                  {{ subject }}
+                </option>
+              </select>
+            </div>
+
+            <!-- Limit Selector -->
+            <div class="flex-1 min-w-[150px]">
+              <label for="limit-select" class="block text-sm font-medium text-neutral-700 mb-2">
+                Show
+              </label>
+              <select 
+                id="limit-select"
+                [(ngModel)]="selectedLimit" 
+                (change)="onLimitChange(selectedLimit)"
+                class="w-full px-4 py-2.5 bg-white border border-neutral-300 rounded-lg text-neutral-900 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-colors"
+                aria-label="Select number of results">
+                <option *ngFor="let limit of limits" [value]="limit">
+                  {{ limit }} results
+                </option>
+              </select>
+            </div>
+
+            <!-- Anonymize Toggle -->
+            <div class="flex items-end">
+              <label class="flex items-center gap-3 cursor-pointer px-4 py-2.5 bg-neutral-50 rounded-lg border border-neutral-200 hover:bg-neutral-100 transition-colors">
+                <mat-slide-toggle 
+                  [(ngModel)]="anonymize" 
+                  (change)="onAnonymizeToggle()"
+                  color="primary"
+                  aria-label="Toggle anonymize mode">
+                </mat-slide-toggle>
+                <span class="text-sm font-medium text-neutral-700">Anonymize</span>
+              </label>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Loading State -->
+        <div *ngIf="loading" class="flex flex-col items-center justify-center py-20">
+          <mat-spinner diameter="50" class="mb-4"></mat-spinner>
+          <p class="text-neutral-600">Loading leaderboard...</p>
+        </div>
+
+        <!-- Error State -->
+        <div *ngIf="error && !loading" class="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
+          <mat-icon class="text-red-500 !w-12 !h-12 !text-5xl mb-3">error_outline</mat-icon>
+          <p class="text-red-700 font-medium">{{ error }}</p>
+          <button 
+            (click)="loadLeaderboard()" 
+            class="mt-4 px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+            Try Again
+          </button>
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="!loading && !error && leaderboard.length === 0" class="bg-white rounded-xl border border-neutral-200 p-12 text-center">
+          <mat-icon class="text-neutral-400 !w-20 !h-20 !text-8xl mb-4">emoji_events</mat-icon>
+          <h3 class="text-xl font-semibold text-neutral-900 mb-2">No Data Yet</h3>
+          <p class="text-neutral-600">Start studying to appear on the leaderboard!</p>
+        </div>
+
+        <!-- Leaderboard Content -->
+        <div *ngIf="!loading && !error && leaderboard.length > 0">
+          
+          <!-- Top 3 Cards -->
+          <div *ngIf="topThree.length > 0" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div *ngFor="let entry of topThree" 
+                 [class]="'relative bg-white rounded-xl border-2 p-6 shadow-sm hover:shadow-md transition-shadow ' + getCardAccent(entry.rank)"
+                 [attr.aria-label]="'Rank ' + entry.rank + ': ' + entry.username">
+              
+              <!-- Medal Icon -->
+              <div class="absolute top-4 right-4">
+                <mat-icon [class]="'!w-8 !h-8 !text-4xl ' + getMedalColor(entry.rank)">
+                  {{ getMedalIcon(entry.rank) }}
+                </mat-icon>
+              </div>
+
+              <!-- Rank Badge -->
+              <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-white border-2 border-neutral-200 mb-4">
+                <span class="text-xl font-bold text-neutral-900">#{{ entry.rank }}</span>
+              </div>
+
+              <!-- Avatar -->
+              <div [class]="'w-20 h-20 rounded-full flex items-center justify-center text-white text-2xl font-bold mb-4 mx-auto ' + getAvatarColor(entry.username)">
+                {{ getInitials(entry.username) }}
+              </div>
+
+              <!-- Username -->
+              <h3 class="text-lg font-semibold text-neutral-900 text-center mb-4 truncate">
+                {{ entry.username }}
+              </h3>
+
+              <!-- Stats -->
+              <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                  <span class="text-sm text-neutral-600">Total Time</span>
+                  <span class="text-lg font-bold text-violet-600">{{ formatTime(entry.totalMinutes) }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-sm text-neutral-600">Sessions</span>
+                  <span class="text-sm font-semibold text-neutral-900">{{ entry.sessionCount }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-sm text-neutral-600">Avg Session</span>
+                  <span class="text-sm font-semibold text-neutral-900">{{ formatTime(entry.avgMinutesPerSession) }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Rest of Leaderboard Table -->
+          <div *ngIf="restOfLeaderboard.length > 0" class="bg-white rounded-xl border border-neutral-200 shadow-sm overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="w-full" role="table" aria-label="Leaderboard rankings">
+                <thead class="bg-neutral-50 border-b border-neutral-200">
+                  <tr>
+                    <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
+                      Rank
+                    </th>
+                    <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
+                      User
+                    </th>
+                    <th scope="col" class="px-6 py-4 text-right text-xs font-semibold text-neutral-700 uppercase tracking-wider">
+                      Total Time
+                    </th>
+                    <th scope="col" class="px-6 py-4 text-right text-xs font-semibold text-neutral-700 uppercase tracking-wider">
+                      Sessions
+                    </th>
+                    <th scope="col" class="px-6 py-4 text-right text-xs font-semibold text-neutral-700 uppercase tracking-wider">
+                      Avg Session
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-neutral-200">
+                  <tr *ngFor="let entry of restOfLeaderboard" 
+                      (click)="openUserModal(entry)"
+                      class="hover:bg-violet-50 hover:shadow-sm transition-all cursor-pointer"
+                      [attr.aria-label]="'Rank ' + entry.rank + ': ' + entry.username + '. Click to view sessions'"
+                      tabindex="0"
+                      (keydown.enter)="openUserModal(entry)"
+                      (keydown.space)="openUserModal(entry)"
+                      role="button">
+                    
+                    <!-- Rank -->
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="flex items-center">
+                        <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-neutral-100 text-sm font-semibold text-neutral-700">
+                          {{ entry.rank }}
+                        </span>
+                      </div>
+                    </td>
+
+                    <!-- User -->
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="flex items-center gap-3">
+                        <div [class]="'w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-semibold ' + getAvatarColor(entry.username)">
+                          {{ getInitials(entry.username) }}
+                        </div>
+                        <span class="font-medium text-neutral-900">{{ entry.username }}</span>
+                      </div>
+                    </td>
+
+                    <!-- Total Time -->
+                    <td class="px-6 py-4 whitespace-nowrap text-right">
+                      <span class="text-sm font-semibold text-violet-600">{{ formatTime(entry.totalMinutes) }}</span>
+                    </td>
+
+                    <!-- Sessions -->
+                    <td class="px-6 py-4 whitespace-nowrap text-right">
+                      <span class="text-sm text-neutral-900">{{ entry.sessionCount }}</span>
+                    </td>
+
+                    <!-- Avg Session -->
+                    <td class="px-6 py-4 whitespace-nowrap text-right">
+                      <span class="text-sm text-neutral-600">{{ formatTime(entry.avgMinutesPerSession) }}</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Pagination -->
+          <div *ngIf="totalPages > 1" class="mt-6 flex items-center justify-between">
+            <div class="text-sm text-neutral-600">
+              Showing page {{ currentPage }} of {{ totalPages }} ({{ totalUsers }} total users)
+            </div>
+
+            <nav class="flex items-center gap-2" aria-label="Pagination">
+              <!-- Previous Button -->
+              <button 
+                (click)="previousPage()" 
+                [disabled]="currentPage === 1"
+                [class.opacity-50]="currentPage === 1"
+                [class.cursor-not-allowed]="currentPage === 1"
+                class="px-4 py-2 bg-white border border-neutral-300 rounded-lg text-neutral-700 hover:bg-neutral-50 disabled:hover:bg-white transition-colors"
+                aria-label="Previous page">
+                <mat-icon class="!w-5 !h-5 !text-xl">chevron_left</mat-icon>
+              </button>
+
+              <!-- Page Numbers -->
+              <button 
+                *ngFor="let page of getPageNumbers()"
+                (click)="page > 0 && goToPage(page)"
+                [disabled]="page === -1"
+                [class.bg-violet-600]="page === currentPage"
+                [class.text-white]="page === currentPage"
+                [class.hover:bg-violet-700]="page === currentPage"
+                [class.bg-white]="page !== currentPage && page > 0"
+                [class.hover:bg-neutral-50]="page !== currentPage && page > 0"
+                [class.cursor-default]="page === -1"
+                class="min-w-[40px] px-4 py-2 border border-neutral-300 rounded-lg text-neutral-700 transition-colors"
+                [attr.aria-label]="page > 0 ? 'Go to page ' + page : 'More pages'"
+                [attr.aria-current]="page === currentPage ? 'page' : null">
+                {{ page > 0 ? page : '...' }}
+              </button>
+
+              <!-- Next Button -->
+              <button 
+                (click)="nextPage()" 
+                [disabled]="currentPage === totalPages"
+                [class.opacity-50]="currentPage === totalPages"
+                [class.cursor-not-allowed]="currentPage === totalPages"
+                class="px-4 py-2 bg-white border border-neutral-300 rounded-lg text-neutral-700 hover:bg-neutral-50 disabled:hover:bg-white transition-colors"
+                aria-label="Next page">
+                <mat-icon class="!w-5 !h-5 !text-xl">chevron_right</mat-icon>
+              </button>
+            </nav>
+          </div>
+
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- User Sessions Modal -->
+  <app-user-sessions-modal
+    *ngIf="showModal && selectedUser"
+    [userId]="selectedUser.userId"
+    [username]="selectedUser.username"
+    [initials]="getInitials(selectedUser.username)"
+    [avatarColor]="getAvatarColor(selectedUser.username)"
+    (closeModal)="closeUserModal()">
+  </app-user-sessions-modal>
+</div>
