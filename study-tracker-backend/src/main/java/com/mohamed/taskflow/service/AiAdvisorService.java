@@ -24,7 +24,7 @@ public class AiAdvisorService {
     private final StudyLogService studyLogService;
     private final RestTemplate restTemplate;
     
-    @Value("${gemini.api.key:AIzaSyCvkGfGCVPi0068NSMy3W_FIi8EIwZsQGI}")
+    @Value("${gemini.api.key}")
     private String geminiApiKey;
     
     private static final String GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
