@@ -1,0 +1,73 @@
+<div class="ai-request-form-container">
+  <form [formGroup]="aiRequestForm" (ngSubmit)="onSubmit()" class="ai-request-form">
+    
+    <!-- Subject Field -->
+    <div class="form-field">
+      <label for="subject" class="field-label">
+        Subject
+      </label>
+      <input
+        id="subject"
+        type="text"
+        formControlName="subject"
+        placeholder="e.g., Mathematics, Physics, English"
+        class="form-input"
+        [class.error]="subject?.invalid && subject?.touched"
+      />
+      
+      <!-- Subject Validation Messages -->
+      <div class="validation-messages" *ngIf="subject?.invalid && subject?.touched">
+        <span class="error-message" *ngIf="subject?.errors?.['required']">
+          <mat-icon class="error-icon">error_outline</mat-icon>
+          Subject is required
+        </span>
+        <span class="error-message" *ngIf="subject?.errors?.['minlength']">
+          <mat-icon class="error-icon">error_outline</mat-icon>
+          Subject must be at least 2 characters
+        </span>
+      </div>
+    </div>
+
+    <!-- Mark Field -->
+    <div class="form-field">
+      <label for="mark" class="field-label">
+        Mark <span class="mark-scale">(out of {{ markScale }})</span>
+      </label>
+      <input
+        id="mark"
+        type="number"
+        formControlName="mark"
+        [placeholder]="'e.g., ' + (markScale === 20 ? '14' : '75')"
+        [min]="0"
+        [max]="markScale"
+        step="0.5"
+        class="form-input"
+        [class.error]="mark?.invalid && mark?.touched"
+      />
+      
+      <!-- Mark Validation Messages -->
+      <div class="validation-messages" *ngIf="mark?.invalid && mark?.touched">
+        <span class="error-message" *ngIf="mark?.errors?.['required']">
+          <mat-icon class="error-icon">error_outline</mat-icon>
+          Mark is required
+        </span>
+        <span class="error-message" *ngIf="mark?.errors?.['min'] || mark?.errors?.['max']">
+          <mat-icon class="error-icon">error_outline</mat-icon>
+          Mark must be between 0 and {{ markScale }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Submit Button -->
+    <button
+      type="submit"
+      class="submit-button"
+      [disabled]="!isFormValid || submitting"
+      [class.loading]="submitting"
+    >
+      <mat-icon *ngIf="!submitting" class="button-icon">psychology</mat-icon>
+      <mat-icon *ngIf="submitting" class="button-icon spinning">sync</mat-icon>
+      <span>{{ submitting ? 'Analyzing...' : 'Get AI Advice' }}</span>
+    </button>
+  </form>
+</div>

@@ -102,40 +102,48 @@ public class AiAdvisorService {
     private String buildPrompt(String subject, Double mark, int totalSessions, 
                                int totalMinutes, double averageSessionLength, 
                                double consistencyScore) {
-        return String.format("""
-            Subject: %s
-            Mark: %.2f%%
-            Study sessions: %d
-            Total study time: %d minutes
-            Average session: %.2f minutes
-            Consistency: %.2f
+        
+        String prompt = """
+            You are a friendly and motivating academic coach helping a student in high school (adjust tone and complexity based on mark and context).
+            Your job is to analyze their performance in %s (mark: %.2f/20) based on their study data, and write a short, natural, encouraging feedback message.
             
-            Create a friendly, encouraging study advice response with these sections:
+            Study Data:
+            - Study sessions: %d
+            - Total study time: %d minutes
+            - Average session: %.2f minutes
+            - Consistency score: %.2f (0-1 scale, higher is better)
             
+            Write as if you're speaking directly to the student — friendly, human, supportive.
+            Keep it conversational but structured into these sections exactly:
+            
+            🎯 Your Strengths  
+            💡 Growth Opportunities  
+            🚀 Action Plan  
+            
+            Tone guidelines:
+            - No robotic or generic phrasing (avoid words like "exceptional understanding" or "apply knowledge with precision").
+            - Adapt your tone to the student's level:
+              - If mark >= 17 → Encouraging but humble ("You're doing really well, but here's how to push even further.")
+              - If mark between 12–16 → Balanced tone ("You're on the right track, and here's how to level up.")
+              - If mark < 12 → Supportive and motivating ("Don't stress — you've got solid foundations. Let's focus on fixing a few habits.")
+            - Use contractions and natural phrasing ("you're", "let's", "don't") to sound real.
+            - Each bullet point should feel personalized and short (1–2 sentences max).
+            - Keep advice realistic for a student — avoid vague things like "improve conceptual mastery."
+            
+            Finally, format it cleanly with Markdown:
             ## 🎯 Your Strengths
-            - List 2-3 specific things they did well (short bullet points)
-            - Be genuine and specific
+            - [2-3 realistic, human-like strengths based on their study patterns and mark]
             
             ## 💡 Growth Opportunities
-            - List 2-3 areas to improve (short bullet points)
-            - Focus on actionable insights, not criticism
-            - No guilt tripping
+            - [2 short, practical growth ideas that match their performance level]
             
             ## 🚀 Action Plan
-            - Provide 3 concrete, specific recommendations
-            - Each recommendation should be:
-              * One clear action they can take immediately
-              * Practical and achievable
-              * 1-2 sentences max
+            1. [3 simple, doable next steps the student can start this week]
             
-            Keep the tone:
-            - Friendly and encouraging
-            - Supportive, not judgmental
-            - Motivating and positive
-            - Use emojis sparingly for visual organization
-            
-            Format: Use markdown with clear sections. Keep it concise and scannable.
-            """, subject, mark, totalSessions, totalMinutes, averageSessionLength, consistencyScore);
+            Avoid long introductions or conclusions. Jump straight to advice.
+            """.formatted(subject, mark, totalSessions, totalMinutes, averageSessionLength, consistencyScore);
+        
+        return prompt;
     }
     
     private String callGeminiApi(String prompt) {

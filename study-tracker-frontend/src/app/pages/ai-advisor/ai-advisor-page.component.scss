@@ -1,0 +1,141 @@
+/* AI Advisor Page - Compact Centered Layout */
+
+/* Page Container - Centered Single Column */
+.page-container {
+  @apply max-w-3xl mx-auto px-4 py-8 lg:py-12;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Title Section - Centered */
+.title-section {
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.page-title {
+  @apply text-3xl font-bold text-gray-900 mb-2;
+  margin: 0;
+  letter-spacing: -0.025em;
+}
+
+.page-description {
+  @apply text-base text-gray-600;
+  margin: 0;
+  font-weight: 400;
+}
+
+/* Unified Card - Form + Feedback Together */
+.unified-card {
+  @apply bg-white rounded-xl shadow-sm border border-gray-200 p-6;
+  transition: box-shadow 0.2s ease;
+  
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+}
+
+/* Form Section (top part of card) */
+.form-section {
+  margin-bottom: 0;
+}
+
+/* Feedback Section (bottom part of card) */
+.feedback-section {
+  margin-top: 2rem;
+}
+
+/* Divider between form and feedback */
+.divider {
+  @apply border-t border-gray-200 mb-6;
+  margin-top: 1.5rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .page-container {
+    @apply px-3 py-6;
+    gap: 1.5rem;
+  }
+
+  .page-title {
+    @apply text-2xl mb-1.5;
+  }
+
+  .page-description {
+    @apply text-sm;
+  }
+
+  .unified-card {
+    @apply p-4 rounded-lg;
+  }
+
+  .feedback-section {
+    margin-top: 1.5rem;
+  }
+
+  .divider {
+    @apply mb-4;
+    margin-top: 1rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .page-container {
+    @apply py-5;
+    gap: 1.25rem;
+  }
+
+  .page-title {
+    @apply text-xl;
+  }
+
+  .unified-card {
+    @apply p-3.5;
+  }
+
+  .feedback-section {
+    margin-top: 1.25rem;
+  }
+
+  .divider {
+    margin-top: 0.875rem;
+  }
+}
+
+/* Material Snackbar Overrides */
+:host ::ng-deep {
+  .success-snackbar {
+    @apply bg-green-600;
+    
+    .mat-mdc-snack-bar-label {
+      @apply text-white;
+    }
+  }
+
+  .error-snackbar {
+    @apply bg-red-600;
+    
+    .mat-mdc-snack-bar-label {
+      @apply text-white;
+    }
+  }
+}
+
+/* Smooth Transitions */
+.form-card,
+.feedback-card {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

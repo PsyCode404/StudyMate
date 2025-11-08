@@ -1,0 +1,133 @@
+<!-- Loading Skeleton -->
+<div *ngIf="loading" class="feedback-card skeleton-card">
+  <div class="card-header">
+    <div class="skeleton skeleton-title"></div>
+    <div class="skeleton-stats">
+      <div class="skeleton skeleton-pill"></div>
+      <div class="skeleton skeleton-pill"></div>
+    </div>
+  </div>
+  
+  <div class="card-body">
+    <div class="skeleton-section">
+      <div class="skeleton skeleton-heading"></div>
+      <div class="skeleton skeleton-line"></div>
+      <div class="skeleton skeleton-line"></div>
+      <div class="skeleton skeleton-line short"></div>
+    </div>
+    
+    <div class="skeleton-section">
+      <div class="skeleton skeleton-heading"></div>
+      <div class="skeleton skeleton-line"></div>
+      <div class="skeleton skeleton-line"></div>
+    </div>
+    
+    <div class="skeleton-section">
+      <div class="skeleton skeleton-heading"></div>
+      <div class="skeleton skeleton-line"></div>
+      <div class="skeleton skeleton-line"></div>
+      <div class="skeleton skeleton-line short"></div>
+    </div>
+  </div>
+</div>
+
+<!-- AI Advice Content -->
+<div *ngIf="!loading && advice" class="feedback-card">
+  
+  <!-- Header with Stats -->
+  <div class="card-header">
+    <div class="header-title">
+      <mat-icon class="title-icon">psychology</mat-icon>
+      <h3>AI Study Advisor</h3>
+    </div>
+    
+    <div class="stats-pills">
+      <div class="stat-pill">
+        <mat-icon class="pill-icon">event_note</mat-icon>
+        <span class="pill-label">Sessions:</span>
+        <span class="pill-value">{{ advice.sessionCount }}</span>
+      </div>
+      <div class="stat-pill">
+        <mat-icon class="pill-icon">schedule</mat-icon>
+        <span class="pill-label">Total:</span>
+        <span class="pill-value">{{ advice.totalMinutes }} min</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Advice Content -->
+  <div class="card-body">
+    
+    <!-- Structured Advice (if available) -->
+    <div *ngIf="hasStructuredAdvice && parsedAdvice" class="structured-advice">
+      
+      <!-- Strengths Section -->
+      <div *ngIf="parsedAdvice.strengths.length > 0" class="advice-section strengths-section">
+        <h4 class="section-title">
+          <span class="emoji">🎯</span>
+          Your Strengths
+        </h4>
+        <ul class="bullet-list">
+          <li *ngFor="let strength of parsedAdvice.strengths" class="bullet-item">
+            {{ strength }}
+          </li>
+        </ul>
+      </div>
+
+      <!-- Growth Opportunities Section -->
+      <div *ngIf="parsedAdvice.opportunities.length > 0" class="advice-section opportunities-section">
+        <h4 class="section-title">
+          <span class="emoji">💡</span>
+          Growth Opportunities
+        </h4>
+        <ul class="bullet-list">
+          <li *ngFor="let opportunity of parsedAdvice.opportunities" class="bullet-item">
+            {{ opportunity }}
+          </li>
+        </ul>
+      </div>
+
+      <!-- Action Plan Section -->
+      <div *ngIf="parsedAdvice.actionPlan.length > 0" class="advice-section action-section">
+        <h4 class="section-title">
+          <span class="emoji">🚀</span>
+          Action Plan
+        </h4>
+        <ol class="numbered-list">
+          <li *ngFor="let action of parsedAdvice.actionPlan; let i = index" class="numbered-item">
+            <span class="item-number">{{ i + 1 }}</span>
+            <span class="item-text">{{ action }}</span>
+          </li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- Fallback: Raw Message (if no structured sections found) -->
+    <div *ngIf="!hasStructuredAdvice" class="raw-advice">
+      <p class="advice-text">{{ advice.message }}</p>
+    </div>
+  </div>
+
+  <!-- Footer with Actions -->
+  <div class="card-footer">
+    <button
+      mat-raised-button
+      color="primary"
+      class="save-button"
+      (click)="onSaveAdvice()">
+      <mat-icon class="button-icon">bookmark</mat-icon>
+      Save Advice
+    </button>
+    
+    <div class="footer-hint">
+      <mat-icon class="hint-icon">info</mat-icon>
+      <span class="hint-text">AI-generated advice based on your study patterns</span>
+    </div>
+  </div>
+</div>
+
+<!-- Empty State (no advice yet) -->
+<div *ngIf="!loading && !advice" class="empty-state">
+  <mat-icon class="empty-icon">psychology</mat-icon>
+  <p class="empty-text">Request AI advice to see personalized recommendations</p>
+</div>

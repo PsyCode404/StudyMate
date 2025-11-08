@@ -1,0 +1,173 @@
+/* AI Request Form - Compact & Clean SaaS Design */
+
+.ai-request-form-container {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.ai-request-form {
+  @apply bg-white rounded-xl shadow-sm border border-gray-200 p-6;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Form Field Styling */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.field-label {
+  @apply text-sm font-medium text-gray-700;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.mark-scale {
+  @apply text-xs font-normal text-gray-500;
+}
+
+.form-input {
+  @apply w-full px-4 py-2.5 text-base text-gray-900 bg-white border border-gray-300 rounded-lg;
+  @apply focus:ring-2 focus:ring-violet-500 focus:border-violet-500;
+  @apply transition-all duration-200;
+  font-family: 'Inter', sans-serif;
+  
+  &::placeholder {
+    @apply text-gray-400;
+  }
+  
+  &:hover:not(:disabled) {
+    @apply border-gray-400;
+  }
+  
+  &:disabled {
+    @apply bg-gray-50 cursor-not-allowed;
+  }
+  
+  &.error {
+    @apply border-red-500 focus:ring-red-500 focus:border-red-500;
+  }
+}
+
+/* Remove number input arrows */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Validation Messages */
+.validation-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-top: -0.25rem;
+}
+
+.error-message {
+  @apply text-xs text-red-600;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.error-icon {
+  @apply text-red-600;
+  font-size: 14px;
+  width: 14px;
+  height: 14px;
+}
+
+/* Submit Button */
+.submit-button {
+  @apply w-full px-6 py-3 text-base font-medium text-white bg-violet-600 rounded-lg;
+  @apply hover:bg-violet-700 focus:ring-4 focus:ring-violet-300;
+  @apply transition-all duration-200;
+  @apply disabled:bg-gray-300 disabled:cursor-not-allowed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: none;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  
+  &:not(:disabled):active {
+    @apply bg-violet-800;
+    transform: translateY(1px);
+  }
+  
+  &.loading {
+    @apply bg-violet-500;
+  }
+}
+
+.button-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+  .ai-request-form {
+    @apply p-4;
+    gap: 1rem;
+  }
+  
+  .form-input {
+    @apply py-2 text-sm;
+  }
+  
+  .submit-button {
+    @apply py-2.5 text-sm;
+  }
+}
+
+/* Desktop - Inline Layout Option */
+@media (min-width: 768px) {
+  .ai-request-form.inline-layout {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 1rem;
+    
+    .form-field {
+      flex: 1;
+    }
+    
+    .submit-button {
+      margin-top: 1.75rem; /* Align with input fields */
+      width: auto;
+      min-width: 150px;
+    }
+  }
+}
+
+/* Material Icon Overrides */
+:host ::ng-deep {
+  mat-icon {
+    vertical-align: middle;
+  }
+}

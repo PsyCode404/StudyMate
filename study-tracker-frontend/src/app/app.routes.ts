@@ -41,6 +41,11 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'ai-advisor',
+    loadComponent: () => import('./pages/ai-advisor/ai-advisor-page.component').then(m => m.AiAdvisorPageComponent),
+    canActivate: [authGuard]
+  },
+  {
     path: '**',
     redirectTo: '/login'
   }
