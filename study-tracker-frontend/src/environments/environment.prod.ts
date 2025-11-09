@@ -1,5 +1,5 @@
 // Production environment configuration
 export const environment = {
   production: true,
-  apiUrl: 'https://your-production-api.com/api'  // Update this with your production API URL
+  apiUrl: 'https://study-tracker-backend.azurewebsites.net/api'
 };
