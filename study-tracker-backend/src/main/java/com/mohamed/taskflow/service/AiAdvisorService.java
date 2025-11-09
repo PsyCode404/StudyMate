@@ -198,8 +198,15 @@ public class AiAdvisorService {
     
     private String callGeminiApi(String prompt) {
         try {
-            // Build request URL (no query parameter needed)
-            String url = GEMINI_API_URL;
+            // Trim API key to remove any whitespace
+            String apiKey = geminiApiKey != null ? geminiApiKey.trim() : "";
+            
+            // Log for debugging (remove in production)
+            System.out.println("DEBUG: API Key length: " + apiKey.length());
+            System.out.println("DEBUG: API Key starts with: " + (apiKey.length() > 10 ? apiKey.substring(0, 10) + "..." : "EMPTY"));
+            
+            // Build request URL with API key as query parameter
+            String url = GEMINI_API_URL + "?key=" + apiKey;
             
             // Build request body
             Map<String, Object> requestBody = new HashMap<>();
@@ -209,10 +216,9 @@ public class AiAdvisorService {
             content.put("parts", new Object[]{part});
             requestBody.put("contents", new Object[]{content});
             
-            // Set headers with API key
+            // Set headers
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.set("x-goog-api-key", geminiApiKey);
             
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
             
