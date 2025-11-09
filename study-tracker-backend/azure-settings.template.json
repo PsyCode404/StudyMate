@@ -1,0 +1,17 @@
+[
+  {
+    "name": "MONGODB_URI",
+    "value": "mongodb+srv://<username>:<password>@<cluster-url>/taskflow?retryWrites=true&w=majority&appName=Cluster0",
+    "slotSetting": false
+  },
+  {
+    "name": "GEMINI_API_KEY",
+    "value": "YOUR_GEMINI_API_KEY_HERE",
+    "slotSetting": false
+  },
+  {
+    "name": "JAVA_OPTS",
+    "value": "-Dserver.port=8080",
+    "slotSetting": false
+  }
+]
